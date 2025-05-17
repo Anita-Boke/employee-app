@@ -3,19 +3,18 @@ import { useState, useEffect } from 'react';
 import DataTable from 'react-data-table-component';
 import Image from 'next/image';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-// Employee Service with JSON Server integration
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const employeeService = {
   getEmployees: async () => {
     try {
       const response = await fetch(`${BASE_URL}/employees`);
       if (!response.ok) throw new Error("Failed to fetch employees");
       const data = await response.json();
-      // localStorage.setItem('employees', JSON.stringify(data));
       return data;
     } catch (error) {
       console.error("Error loading employees from server:", error);
-      // const saved = localStorage.getItem('employees');
+      const saved = localStorage.getItem('employees');
       return saved ? JSON.parse(saved) : [];
     }
   },
@@ -36,7 +35,6 @@ const employeeService = {
 
   addEmployee: async (employee) => {
     try {
-      console.log("Submitting new employee:", employee);
       const response = await fetch(`${BASE_URL}/employees`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -61,7 +59,6 @@ const employeeService = {
 
   updateEmployee: async (id, updates) => {
     try {
-      console.log("Updating employee:", id, updates);
       const response = await fetch(`${BASE_URL}/employees/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -88,7 +85,6 @@ const employeeService = {
 
   deleteEmployee: async (id) => {
     try {
-      console.log("Deleting employee:", id);
       const response = await fetch(`${BASE_URL}/employees/${id}`, {
         method: 'DELETE'
       });
@@ -122,7 +118,6 @@ export default function EmployeeManagementSystem() {
   const [error, setError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Load employees on initial render
   useEffect(() => {
     const loadEmployees = async () => {
       setLoading(true);
@@ -138,7 +133,6 @@ export default function EmployeeManagementSystem() {
     loadEmployees();
   }, []);
 
-  // Define columns for the data table
   const columns = [
     {
       name: 'Profile',
@@ -185,18 +179,21 @@ export default function EmployeeManagementSystem() {
           <button 
             className="btn primary small"
             onClick={() => showEmployee(row.id)}
+            title={`View ${row.fullName}`}
           >
             View
           </button>
           <button 
             className="btn secondary small"
             onClick={() => showEditForm(row)}
+            title={`Edit ${row.fullName}`}
           >
             Edit
           </button>
           <button 
             className="btn danger small"
             onClick={() => handleDelete(row.id)}
+            title={`Delete ${row.fullName}`}
           >
             Delete
           </button>
@@ -205,17 +202,44 @@ export default function EmployeeManagementSystem() {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+      minWidth: '220px'
     },
   ];
 
-  // Handle image upload and convert to Base64
+  const customStyles = {
+    table: {
+      style: {
+        width: '100%',
+      },
+    },
+    rows: {
+      style: {
+        minHeight: '50px',
+        paddingRight: '8px',
+      },
+    },
+    headCells: {
+      style: {
+        paddingLeft: '8px',
+        paddingRight: '8px',
+        fontWeight: 'bold',
+        fontSize: '1rem',
+      },
+    },
+    cells: {
+      style: {
+        paddingLeft: '8px',
+        paddingRight: '8px',
+      },
+    },
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result;
-        console.log("Preview Base64:", base64String);
         setFormData(prev => ({ ...prev, profilePicture: base64String }));
         setImagePreview(base64String);
       };
@@ -223,7 +247,6 @@ export default function EmployeeManagementSystem() {
     }
   };
 
-  // View navigation handlers
   const showAddForm = () => {
     setFormData({
       fullName: '',
@@ -269,7 +292,6 @@ export default function EmployeeManagementSystem() {
     setError(null);
   };
 
-  // Form handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -322,31 +344,6 @@ export default function EmployeeManagementSystem() {
     }
   };
 
-  // Custom styles for the table
-  const customStyles = {
-    rows: {
-      style: {
-        minHeight: '50px',
-        paddingRight:'8px',
-      },
-    },
-    headCells: {
-      style: {
-        paddingLeft: '8px',
-        paddingRight: '8px',
-        fontWeight: 'bold',
-        fontSize: '1rem',
-      },
-    },
-    cells: {
-      style: {
-        paddingLeft: '8px',
-        paddingRight: '8px',
-      },
-    },
-  };
-
-  // Render different views
   const renderView = () => {
     if (loading) return <div className="loading">Loading...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -503,8 +500,8 @@ export default function EmployeeManagementSystem() {
                       <Image 
                         src={imagePreview} 
                         alt="Preview" 
-                        width={20} 
-                        height={30}
+                        width={180} 
+                        height={180}
                         className="rounded-full"
                       />
                     </div>
@@ -601,11 +598,15 @@ export default function EmployeeManagementSystem() {
                 columns={columns}
                 data={employees}
                 customStyles={customStyles}
+                responsive
+                noHeader
+                fixedHeader
+                fixedHeaderScrollHeight="500px"
                 pagination
                 highlightOnHover
-                responsive
                 striped
                 noDataComponent="No employees found"
+                className="w-full"
               />
             )}
           </div>

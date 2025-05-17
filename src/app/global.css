@@ -1,4 +1,4 @@
-/* Global Styles */
+/* Employee Management System Styles */
 :root {
   --primary-color: #4a6fa5;
   --secondary-color: #6c757d;
@@ -21,6 +21,14 @@ body {
   color: #333;
   background-color: #f5f5f5;
   padding: 20px;
+}
+
+/* Employee App Container */
+.employee-app {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
 /* Button Styles */
@@ -51,7 +59,7 @@ body {
 }
 
 .btn.small {
-  padding: 0.25rem 0.5rem;
+  padding: 0.4rem 0.8rem;
   font-size: 0.875rem;
 }
 
@@ -221,8 +229,7 @@ body {
 
 /* List View Styles */
 .list-view {
-  max-width: 1200px;
-  margin: 0;
+  width: 100%;
 }
 
 .list-header {
@@ -261,30 +268,71 @@ body {
 
 /* Action Buttons */
 .action-buttons {
-  display:flex ;
-  gap: 0.1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
+
 .action-buttons > button {
-  height: 20px; 
-  width: 30px;
-  line-height: 30px; 
-  padding: 0 0.7em; 
-  text-align: center
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.action-buttons > button:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
 }
 
 /* DataTable Overrides */
 .rdt_Table {
-  background: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
+  min-width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .rdt_TableHead {
-  font-weight: bold;
+  background-color: #f8f9fa;
+  font-weight: 600;
 }
 
-.rdt_Pagination {
-  background: white;
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
+.rdt_TableRow {
+  transition: background-color 0.2s;
+}
+
+.rdt_TableRow:hover {
+  background-color: #f8f9fa;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .employee-app {
+    padding: 1rem;
+  }
+  
+  .list-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .action-buttons > button {
+    width: 100%;
+  }
+  
+  .rdt_Table {
+    font-size: 0.9rem;
+  }
+  
+  .employee-info strong {
+    width: 100px;
+  }
 }
